@@ -1,0 +1,7 @@
+plugin: aws_ec2
+
+hostnames:
+  - network-interface.association.public-ip
+
+keyed_groups:
+  - key: tags.Application
