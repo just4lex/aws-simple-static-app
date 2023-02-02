@@ -37,6 +37,8 @@ jobs:
     needs: start-runner
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps: 
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build AMI with Packer
         run: packer init . && packer build .
         working-directory: packer
@@ -50,6 +52,8 @@ jobs:
       - build-ami
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps: 
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Deploy
         run: terraform init && terrafrom plan && terraform apply -auto-approve
         working-directory: terraform
@@ -65,6 +69,8 @@ jobs:
       - deploy-infra
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps: 
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Ansible Setup
         run: ansible-playbook -i inventory.aws_ec2.yml main.yml
         working-directory: ansible
