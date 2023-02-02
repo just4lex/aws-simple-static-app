@@ -65,7 +65,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Deploy
-        run: terraform init && terrafrom plan && terraform apply -auto-approve
+        run: terraform init && terraform plan && terraform apply -auto-approve
         working-directory: terraform
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.DEVOPS_AWS_ACCESS_KEY_ID }}
