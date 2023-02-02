@@ -39,7 +39,7 @@ jobs:
     steps: 
       - name: Build AMI with Packer
         run: packer init . && packer build .
-        working-directory: ./packer
+        working-directory: packer
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.DEVOPS_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVOPS_AWS_SECRET_ACCESS_KEY }}
@@ -52,7 +52,7 @@ jobs:
     steps: 
       - name: Deploy
         run: terraform init && terrafrom plan && terraform apply -auto-approve
-        working-directory: ./terraform
+        working-directory: terraform
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.DEVOPS_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVOPS_AWS_SECRET_ACCESS_KEY }}
@@ -67,7 +67,7 @@ jobs:
     steps: 
       - name: Ansible Setup
         run: ansible-playbook -i inventory.aws_ec2.yml main.yml
-        working-directory: ./ansible
+        working-directory: ansible
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.DEVOPS_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVOPS_AWS_SECRET_ACCESS_KEY }}
