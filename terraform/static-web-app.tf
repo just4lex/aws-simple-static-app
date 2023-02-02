@@ -145,3 +145,8 @@ resource "aws_s3_bucket_acl" "http_s3_acl" {
     bucket = aws_s3_bucket.http_s3.id
     acl = "private"
 }
+
+output "instance_public_ip" {
+  description = "Public IP address of the EC2 instance"
+  value       = aws_eip.app.public_ip
+}

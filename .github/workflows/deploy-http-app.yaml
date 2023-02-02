@@ -32,13 +32,40 @@ jobs:
               {"Key": "Name", "Value": "ec2-github-runner"},
               {"Key": "GitHubRepository", "Value": "${{ github.repository }}"}
             ]
-  do-the-job:
-    name: Do the job on the runner
-    needs: start-runner # required to start the main job when the runner is ready
-    runs-on: ${{ needs.start-runner.outputs.label }} # run the job on the newly created runner
-    steps:
-      - name: Hello World
-        run: echo 'Hello World!'
+  build-ami:
+    name: Build Golden AMI for Static app
+    needs: start-runner
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    steps: 
+      - name: Build AMI with Packer
+        run: packer init . && packer build .
+        working-directory: ./packer
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.DEVOPS_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVOPS_AWS_SECRET_ACCESS_KEY }}
+  deploy-infra:
+    name: Deploy AWS Infrastructure with Terraform
+    needs: start-runner
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    steps: 
+      - name: Deploy
+        run: terraform init && terrafrom plan && terraform apply -auto-approve
+        working-directory: ./terraform
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.DEVOPS_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVOPS_AWS_SECRET_ACCESS_KEY }}
+      TF_VAR_PUBLIC_KEY_MATERIAL: ${{ secrets.TF_VAR_PUBLIC_KEY_MATERIAL }}
+  setup-hosts:
+    name: Setup EC2 Instances with Ansible
+    needs: start-runner
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    steps: 
+      - name: Ansible Setup
+        run: ansible-playbook -i inventory.aws_ec2.yml main.yml
+        working-directory: ./ansible
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.DEVOPS_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVOPS_AWS_SECRET_ACCESS_KEY }}
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:

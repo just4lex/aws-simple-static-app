@@ -4,9 +4,7 @@
 
 
 ## Build image 
-1. Setup AWS Credentials:
-    a. Provide and export .env file `export $(xargs < .env)`
-    b. Setup env variable on your own
+1. Setup AWS Credentials
 2. Validate and build AMI with Packer
 ```
 cd packer/

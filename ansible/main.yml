@@ -32,3 +32,25 @@
     ansible.builtin.git:
       repo: 'https://bitbucket.org/dptrealtime/html-web-app.git'
       dest: /var/www/html
+
+  - name: Download CloudWatch agent deb
+    ansible.builtin.get_url:
+      url: "https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb"
+      dest: /tmp/cloudwatch-agent.deb
+
+  - name: Install Cloudwatch agent
+    ansible.builtin.apt:
+      deb:  /tmp/cloudwatch-agent.deb    
+
+  - name: Generate Cloudwatch config
+    ansible.builtin.template:
+      src: cloudwatch_config.json.j2
+      dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+
+  - name: Start Cloudwatch agent
+    ansible.builtin.systemd:
+      name: amazon-cloudwatch-agent
+      state: started
+      enabled: true
+
+  
