@@ -39,9 +39,19 @@ jobs:
     steps: 
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build AMI with Packer
-        run: packer init . && packer build .
+        
+      - name: Packer Init
+        run: packer init aws-ubuntu.pkr.hcl
         working-directory: packer
+
+      - name: Packer Validate
+        run: packer validate aws-ubuntu.pkr.hcl
+        working-directory: packer
+
+      - name: Packer Build
+        run: packer build aws-ubuntu.pkr.hcl
+        working-directory: packer
+
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.DEVOPS_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVOPS_AWS_SECRET_ACCESS_KEY }}
