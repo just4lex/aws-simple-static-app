@@ -45,7 +45,9 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVOPS_AWS_SECRET_ACCESS_KEY }}
   deploy-infra:
     name: Deploy AWS Infrastructure with Terraform
-    needs: start-runner
+    needs: 
+      - start-runner
+      - build-ami
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps: 
       - name: Deploy
@@ -57,7 +59,10 @@ jobs:
       TF_VAR_PUBLIC_KEY_MATERIAL: ${{ secrets.TF_VAR_PUBLIC_KEY_MATERIAL }}
   setup-hosts:
     name: Setup EC2 Instances with Ansible
-    needs: start-runner
+    needs: 
+      - start-runner
+      - build-ami
+      - deploy-infra
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps: 
       - name: Ansible Setup
@@ -69,8 +74,10 @@ jobs:
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:
-      - start-runner # required to get output from the start-runner job
-      - do-the-job # required to wait when the main job is done
+      - start-runner
+      - build-ami
+      - deploy-infra
+      - setup-hosts
     runs-on: ubuntu-latest
     if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
     steps:
