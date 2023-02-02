@@ -11,8 +11,8 @@ source "amazon-ebs" "ubuntu" {
   ami_name      = "ubuntu-16.04-apache-git-awscli"
   instance_type = "t2.micro"
   region        = "us-east-1"
-  force_deregister = "true",
-  force_delete_snapshot = "true",
+  force_deregister = "true"
+  force_delete_snapshot = "true"
   source_ami_filter {
     filters = {
       name                = "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*"
